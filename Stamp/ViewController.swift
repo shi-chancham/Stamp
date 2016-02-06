@@ -8,10 +8,14 @@
 
 import UIKit
 
+import AssetsLibrary
+
+import Social
+
 class ViewController: UIViewController, UIImagePickerControllerDelegate,
-UINavigationControllerDelegate {
+UINavigationControllerDelegate, UIActionSheetDelegate {
     
-    var imageNameArray: [String] = ["hige", "heart", "hoshi", "neko"]
+    var imageNameArray: [String] = ["hige", "heart", "star", "neko"]
     
     var imageIndex: Int = 0
     
@@ -25,6 +29,9 @@ UINavigationControllerDelegate {
     
     var lastPoint: CGPoint!
     private var contextCache:[UIImage] = []
+    
+    var lastDrawImage: UIImage!
+    var bezierPath: UIBezierPath!
     
     //lineWidth
     var lineSize : [Float] = [15.0, 10.0, 5.0]
@@ -75,8 +82,12 @@ UINavigationControllerDelegate {
             //5はペン
         } else if imageIndex == 5 {
             let touch = touches.first
-            lastPoint = touch!.locationInView(self.haikeiImageView)
-            NSLog("began")
+            let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
+            bezierPath = UIBezierPath()
+            bezierPath.lineWidth = 1.0
+            bezierPath.moveToPoint(currentPoint)
+            //lastPoint = touch!.locationInView(self.haikeiImageView)
+            //NSLog("began")
         }
     }
     
@@ -87,42 +98,49 @@ UINavigationControllerDelegate {
             imageView.center = CGPointMake(location.x, location.y)
             
         }else if imageIndex == 5 {
+            if bezierPath == nil {
+                return
+            }
             let touch = touches.first
-            let currentPoint: CGPoint! = touch!.locationInView(self.haikeiImageView)
-            //let currentPoint: CGPoint! = touch!.locationInView(self.view)
-            
-            UIGraphicsBeginImageContext(self.haikeiImageView.bounds.size)
-            let context: CGContextRef = UIGraphicsGetCurrentContext()!
-            haikeiImageView.image?.drawInRect(haikeiImageView.bounds)
-            
-            CGContextSetLineWidth(context, 10.0)
-            let color: CGColorRef = UIColor.blackColor().CGColor
-            CGContextSetStrokeColorWithColor(context, color)
-            CGContextSetLineCap(context, CGLineCap.Round)
-            CGContextSetLineWidth(context, CGFloat(lineWidth))
-            CGContextSetBlendMode(context, CGBlendMode.Normal)
-            
-            CGContextMoveToPoint(context, lastPoint.x, lastPoint.y)
-            CGContextAddLineToPoint(context, currentPoint.x, currentPoint.y)
-            
-            CGContextStrokePath(context)
-            haikeiImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            
-            lastPoint = currentPoint
-            print(lastPoint)
-            
-        }
+            let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
+            bezierPath.addLineToPoint(currentPoint)
+            drawLine(bezierPath)
+         }
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if imageIndex != 0 && imageIndex < 5{
             imageView.center = CGPointMake(location.x, location.y)
         }else if imageIndex == 5 {
-            UIGraphicsBeginImageContext(self.haikeiImageView.bounds.size)
-            haikeiImageView.image?.drawInRect(haikeiImageView.bounds, blendMode: CGBlendMode.Normal, alpha: 1.0)
-            UIGraphicsEndImageContext()
+            if bezierPath == nil {
+                return
+            }
+            let touch = touches.first
+            let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
+            bezierPath.addLineToPoint(currentPoint)
+            drawLine(bezierPath)
+            lastDrawImage = haikeiImageView.image
+//            UIGraphicsBeginImageContext(self.haikeiImageView.bounds.size)
+//            haikeiImageView.image?.drawInRect(haikeiImageView.bounds, blendMode: CGBlendMode.Normal, alpha: 1.0)
+//            UIGraphicsEndImageContext()
         }
+    }
+    
+    @IBAction func clear() {
+        lastDrawImage = nil
+        haikeiImageView.image = nil
+    }
+    
+    func drawLine(path:UIBezierPath) {
+        UIGraphicsBeginImageContext(haikeiImageView.frame.size)
+        if lastDrawImage != nil {
+            lastDrawImage.drawAtPoint(CGPointZero)
+        }
+        let blackColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+        blackColor.setStroke()
+        path.stroke()
+        haikeiImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
     }
     
     @IBAction func back() {
@@ -157,14 +175,80 @@ UINavigationControllerDelegate {
     }
     
     @IBAction func save() {
-        let rect: CGRect = CGRectMake(0, 30, 320, 380)
-        UIGraphicsBeginImageContext(rect.size)
-        self.view.layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let capture = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+        var sheet: UIActionSheet = UIActionSheet()
+        let title: String = "Please choose a plan"
+        sheet.title  = title
+        sheet.delegate = self
+        sheet.addButtonWithTitle("Cancel")
+        sheet.addButtonWithTitle("カメラロールに保存")
+        sheet.addButtonWithTitle("Twitterでツイート")
+        sheet.addButtonWithTitle("FaceBookに投稿")
         
-        UIImageWriteToSavedPhotosAlbum(capture, nil, nil, nil)
-        
+        sheet.cancelButtonIndex = 0
+        sheet.showInView(self.view)
+    }
+    
+    func actionSheet(sheet: UIActionSheet,clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex == 1 {
+            //            let rect: CGRect = haikeiImageView.frame
+            //            UIGraphicsBeginImageContext(rect.size)
+            //            self.view.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+            //            let capture = UIGraphicsGetImageFromCurrentImageContext()
+            //            UIGraphicsEndImageContext()
+            //
+            //            UIImageWriteToSavedPhotosAlbum(capture, nil, nil, nil)
+            
+            UIGraphicsBeginImageContextWithOptions(haikeiImageView.bounds.size, true, 1.0)
+            // 描画
+            view.drawViewHierarchyInRect(view.bounds, afterScreenUpdates: true)
+            // 描画が行われたスクリーンショットの取得
+            let screenShot = UIGraphicsGetImageFromCurrentImageContext()
+            // スクリーンショットの取得終了
+            UIGraphicsEndImageContext()
+            //hozonn
+            UIImageWriteToSavedPhotosAlbum(screenShot, self, nil, nil)
+            
+        }else if buttonIndex == 2 {
+            UIGraphicsBeginImageContextWithOptions(haikeiImageView.bounds.size, true, 1.0)
+            // 描画
+            view.drawViewHierarchyInRect(view.bounds, afterScreenUpdates: true)
+            // 描画が行われたスクリーンショットの取得
+            let screenShot = UIGraphicsGetImageFromCurrentImageContext()
+            // スクリーンショットの取得終了
+            UIGraphicsEndImageContext()
+            
+            //ツイート
+            let myComposeView = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+            
+            // 投稿するテキストを指定.
+            myComposeView.setInitialText("写真にスタンプを押したよ！")
+            
+            // 投稿する画像を指定.
+            myComposeView.addImage(screenShot)
+            
+            // myComposeViewの画面遷移.
+            self.presentViewController(myComposeView, animated: true, completion: nil)
+        }else if buttonIndex == 3 {
+            UIGraphicsBeginImageContextWithOptions(haikeiImageView.bounds.size, true, 1.0)
+            // 描画
+            view.drawViewHierarchyInRect(view.bounds, afterScreenUpdates: true)
+            // 描画が行われたスクリーンショットの取得
+            let screenShot = UIGraphicsGetImageFromCurrentImageContext()
+            // スクリーンショットの取得終了
+            UIGraphicsEndImageContext()
+            
+            //ツイート
+            let myComposeView = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+            
+            // 投稿するテキストを指定.
+            myComposeView.setInitialText("写真にスタンプを押したよ！")
+            
+            // 投稿する画像を指定.
+            myComposeView.addImage(screenShot)
+            
+            // myComposeViewの画面遷移.
+            self.presentViewController(myComposeView, animated: true, completion: nil)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -173,4 +257,7 @@ UINavigationControllerDelegate {
     }
     
 }
+
+
+
 
