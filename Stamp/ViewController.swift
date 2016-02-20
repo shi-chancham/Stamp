@@ -37,6 +37,13 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
     var lineSize : [Float] = [15.0, 10.0, 5.0]
     var lineWidth : Float = 10.0
     
+    @IBOutlet var photoImageView: UIImageView!
+    
+    //subview出てるか
+    var isSubViewAppear = false
+    
+    let subView = SubView()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,68 +68,89 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
     
     @IBAction func selectedFifth(){
         imageIndex = 5
+        
+        if isSubViewAppear == false {
+            //viewに追加
+            self.view.addSubview(subView)
+            isSubViewAppear = true
+        }else {
+            
+            //消す
+            subView.removeFromSuperview()
+            isSubViewAppear = false
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        //1~4はスタンプ
-        if imageIndex != 0 && imageIndex < 5{
-            let touch: UITouch = (touches.first)!
-            location = touch.locationInView(self.view)
-            
-            imageView = UIImageView(frame: CGRectMake(0, 0, 40, 40))
-            
-            let image: UIImage = UIImage(named: imageNameArray[imageIndex - 1])!
-            imageView.image = image
-            
-            imageView.center = CGPointMake(location.x, location.y)
-            
-            self.view.addSubview(imageView)
-            imageArray.append(imageView)
-            
-            //5はペン
-        } else if imageIndex == 5 {
-            let touch = touches.first
-            let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
-            bezierPath = UIBezierPath()
-            bezierPath.lineWidth = 1.0
-            bezierPath.moveToPoint(currentPoint)
-            //lastPoint = touch!.locationInView(self.haikeiImageView)
-            //NSLog("began")
+        let touch: UITouch = (touches.first)!
+        if touch.locationInView(self.view).y < haikeiImageView.frame.height {
+            //1~4はスタンプ
+            if imageIndex != 0 && imageIndex < 5{
+                print(touch.locationInView(self.view).y)
+                print(haikeiImageView.frame.height)
+                location = touch.locationInView(self.view)
+                
+                imageView = UIImageView(frame: CGRectMake(0, 0, 40, 40))
+                
+                let image: UIImage = UIImage(named: imageNameArray[imageIndex - 1])!
+                imageView.image = image
+                
+                imageView.center = CGPointMake(location.x, location.y)
+                
+                self.view.addSubview(imageView)
+                imageArray.append(imageView)
+                
+                //5はペン
+            } else if imageIndex == 5 {
+                let touch = touches.first
+                let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
+                bezierPath = UIBezierPath()
+                bezierPath.lineWidth = 1.0
+                bezierPath.moveToPoint(currentPoint)
+                //lastPoint = touch!.locationInView(self.haikeiImageView)
+                //NSLog("began")
+            }
         }
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if imageIndex != 0 && imageIndex < 5{
-            let touch: UITouch = (touches.first)!
-            location = touch.locationInView(self.view)
-            imageView.center = CGPointMake(location.x, location.y)
-            
-        }else if imageIndex == 5 {
-            if bezierPath == nil {
-                return
+        let touch: UITouch = (touches.first)!
+        if touch.locationInView(self.view).y < haikeiImageView.frame.height {
+            if imageIndex != 0 && imageIndex < 5{
+                location = touch.locationInView(self.view)
+                imageView.center = CGPointMake(location.x, location.y)
+                
+            }else if imageIndex == 5 {
+                if bezierPath == nil {
+                    return
+                }
+                let touch = touches.first
+                let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
+                bezierPath.addLineToPoint(currentPoint)
+                drawLine(bezierPath)
+                
             }
-            let touch = touches.first
-            let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
-            bezierPath.addLineToPoint(currentPoint)
-            drawLine(bezierPath)
-         }
+        }
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if imageIndex != 0 && imageIndex < 5{
-            imageView.center = CGPointMake(location.x, location.y)
-        }else if imageIndex == 5 {
-            if bezierPath == nil {
-                return
+        let touch = touches.first
+        if touch!.locationInView(self.view).y < haikeiImageView.frame.height {
+            if imageIndex != 0 && imageIndex < 5{
+                
+                imageView.center = CGPointMake(location.x, location.y)
+            }else if imageIndex == 5 {
+                if bezierPath == nil {
+                    return
+                }
+                let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
+                bezierPath.addLineToPoint(currentPoint)
+                drawLine(bezierPath)
+                lastDrawImage = haikeiImageView.image
+                //            UIGraphicsBeginImageContext(self.haikeiImageView.bounds.size)
+                //            haikeiImageView.image?.drawInRect(haikeiImageView.bounds, blendMode: CGBlendMode.Normal, alpha: 1.0)
+                //            UIGraphicsEndImageContext()
             }
-            let touch = touches.first
-            let currentPoint:CGPoint = touch!.locationInView(haikeiImageView)
-            bezierPath.addLineToPoint(currentPoint)
-            drawLine(bezierPath)
-            lastDrawImage = haikeiImageView.image
-//            UIGraphicsBeginImageContext(self.haikeiImageView.bounds.size)
-//            haikeiImageView.image?.drawInRect(haikeiImageView.bounds, blendMode: CGBlendMode.Normal, alpha: 1.0)
-//            UIGraphicsEndImageContext()
         }
     }
     
@@ -168,14 +196,14 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         let image: UIImage = info[UIImagePickerControllerEditedImage] as! UIImage
         
-        haikeiImageView.image = image
+        photoImageView.image = image
         
         picker.dismissViewControllerAnimated(true, completion: nil)
         
     }
     
     @IBAction func save() {
-        var sheet: UIActionSheet = UIActionSheet()
+        let sheet: UIActionSheet = UIActionSheet()
         let title: String = "Please choose a plan"
         sheet.title  = title
         sheet.delegate = self
@@ -208,6 +236,22 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
             //hozonn
             UIImageWriteToSavedPhotosAlbum(screenShot, self, nil, nil)
             
+            let alert = UIAlertController(title: "保存",
+                message: "カメラロールに保存しました",
+                preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alert.addAction(
+                UIAlertAction(
+                    title: "OK",
+                    style: UIAlertActionStyle.Default,
+                    handler: {action in
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
+                )
+            )
+            sheet.removeFromSuperview()
+            presentViewController(alert, animated: true, completion: nil)
+            
         }else if buttonIndex == 2 {
             UIGraphicsBeginImageContextWithOptions(haikeiImageView.bounds.size, true, 1.0)
             // 描画
@@ -220,6 +264,21 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
             //ツイート
             let myComposeView = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
             
+            //投稿終了後に呼ばれる
+            myComposeView.completionHandler = {
+                (result:SLComposeViewControllerResult) -> () in
+                switch (result) {
+                case SLComposeViewControllerResult.Done:
+                    print("hoge")
+                    
+                    NSTimer.scheduledTimerWithTimeInterval(0.35, target: self, selector: "showAlert:", userInfo: nil, repeats: false)
+                    
+                    
+                case SLComposeViewControllerResult.Cancelled:
+                    break
+                }
+            }
+            
             // 投稿するテキストを指定.
             myComposeView.setInitialText("写真にスタンプを押したよ！")
             
@@ -228,6 +287,9 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
             
             // myComposeViewの画面遷移.
             self.presentViewController(myComposeView, animated: true, completion: nil)
+            
+            
+            
         }else if buttonIndex == 3 {
             UIGraphicsBeginImageContextWithOptions(haikeiImageView.bounds.size, true, 1.0)
             // 描画
@@ -248,12 +310,48 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
             
             // myComposeViewの画面遷移.
             self.presentViewController(myComposeView, animated: true, completion: nil)
+            
+            let alert = UIAlertController(title: "保存",
+                message: "シェアしました",
+                preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alert.addAction(
+                UIAlertAction(
+                    title: "OK",
+                    style: UIAlertActionStyle.Default,
+                    handler: {action in
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
+                )
+            )
+            //アラート表示
+            sheet.removeFromSuperview()
+            presentViewController(alert, animated: true, completion: nil)
+            
         }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func showAlert(timer : NSTimer) {
+        let alert = UIAlertController(title: "保存",
+            message: "シェアしました",
+            preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alert.addAction(
+            UIAlertAction(
+                title: "OK",
+                style: UIAlertActionStyle.Default,
+                handler: {action in
+                    self.navigationController?.popViewControllerAnimated(true)
+                }
+            )
+        )
+        //アラート表示
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
 }

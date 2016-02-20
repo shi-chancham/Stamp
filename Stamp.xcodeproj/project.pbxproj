@@ -10,9 +10,10 @@
 		B1157C651C53759700772E71 /* heart.png in Resources */ = {isa = PBXBuildFile; fileRef = B1157C611C53759700772E71 /* heart.png */; };
 		B1157C671C53759700772E71 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = B1157C631C53759700772E71 /* star.png */; };
 		B1157C681C53759700772E71 /* neko.png in Resources */ = {isa = PBXBuildFile; fileRef = B1157C641C53759700772E71 /* neko.png */; };
-		B1157C6A1C53778C00772E71 /* hige.PNG in Resources */ = {isa = PBXBuildFile; fileRef = B1157C691C53778C00772E71 /* hige.PNG */; };
+		B1157C6A1C53778C00772E71 /* hige.png in Resources */ = {isa = PBXBuildFile; fileRef = B1157C691C53778C00772E71 /* hige.png */; };
 		B1157C6E1C538A9900772E71 /* 鉛筆.png in Resources */ = {isa = PBXBuildFile; fileRef = B1157C6D1C538A9900772E71 /* 鉛筆.png */; };
 		B1157C721C53994500772E71 /* share.png in Resources */ = {isa = PBXBuildFile; fileRef = B1157C711C53994500772E71 /* share.png */; };
+		B19931B41C787A75006529A5 /* SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19931B31C787A75006529A5 /* SubView.swift */; };
 		B1B4D2E21C12BA600064E9C0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B4D2E11C12BA600064E9C0 /* AppDelegate.swift */; };
 		B1B4D2E41C12BA600064E9C0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B4D2E31C12BA600064E9C0 /* ViewController.swift */; };
 		B1B4D2E71C12BA600064E9C0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1B4D2E51C12BA600064E9C0 /* Main.storyboard */; };
@@ -48,9 +49,10 @@
 		B1157C611C53759700772E71 /* heart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = heart.png; sourceTree = "<group>"; };
 		B1157C631C53759700772E71 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		B1157C641C53759700772E71 /* neko.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = neko.png; sourceTree = "<group>"; };
-		B1157C691C53778C00772E71 /* hige.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hige.PNG; sourceTree = "<group>"; };
+		B1157C691C53778C00772E71 /* hige.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hige.png; sourceTree = "<group>"; };
 		B1157C6D1C538A9900772E71 /* 鉛筆.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "鉛筆.png"; sourceTree = "<group>"; };
 		B1157C711C53994500772E71 /* share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = share.png; sourceTree = "<group>"; };
+		B19931B31C787A75006529A5 /* SubView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubView.swift; path = ../SubView.swift; sourceTree = "<group>"; };
 		B1B4D2DE1C12BA600064E9C0 /* Stamp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stamp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1B4D2E11C12BA600064E9C0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B1B4D2E31C12BA600064E9C0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -121,13 +123,14 @@
 			children = (
 				B1157C711C53994500772E71 /* share.png */,
 				B1157C6D1C538A9900772E71 /* 鉛筆.png */,
-				B1157C691C53778C00772E71 /* hige.PNG */,
+				B1157C691C53778C00772E71 /* hige.png */,
 				B1157C611C53759700772E71 /* heart.png */,
 				B1157C631C53759700772E71 /* star.png */,
 				B1157C641C53759700772E71 /* neko.png */,
 				B1B4D30F1C12BA840064E9C0 /* Stamp素材 */,
 				B1B4D2E11C12BA600064E9C0 /* AppDelegate.swift */,
 				B1B4D2E31C12BA600064E9C0 /* ViewController.swift */,
+				B19931B31C787A75006529A5 /* SubView.swift */,
 				B1B4D2E51C12BA600064E9C0 /* Main.storyboard */,
 				B1B4D2E81C12BA600064E9C0 /* Assets.xcassets */,
 				B1B4D2EA1C12BA600064E9C0 /* LaunchScreen.storyboard */,
@@ -278,7 +281,7 @@
 				B1B4D3161C12BA840064E9C0 /* hana.png in Resources */,
 				B1157C671C53759700772E71 /* star.png in Resources */,
 				B1B4D3151C12BA840064E9C0 /* background.png in Resources */,
-				B1157C6A1C53778C00772E71 /* hige.PNG in Resources */,
+				B1157C6A1C53778C00772E71 /* hige.png in Resources */,
 				B1157C721C53994500772E71 /* share.png in Resources */,
 				B1157C681C53759700772E71 /* neko.png in Resources */,
 				B1157C651C53759700772E71 /* heart.png in Resources */,
@@ -311,6 +314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B19931B41C787A75006529A5 /* SubView.swift in Sources */,
 				B1B4D2E41C12BA600064E9C0 /* ViewController.swift in Sources */,
 				B1B4D2E21C12BA600064E9C0 /* AppDelegate.swift in Sources */,
 			);
