@@ -42,8 +42,10 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
     //subview出てるか
     var isSubViewAppear = false
     
-    let subView = SubView()
+    var lineColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
     
+    let subView = SubView()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,6 +71,20 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
     @IBAction func selectedFifth(){
         imageIndex = 5
         
+        subView.redButton.addTarget(self, action: "changeColor1:", forControlEvents: .TouchUpInside)
+        
+        subView.blueButton.addTarget(self, action: "changeColor2:", forControlEvents: .TouchUpInside)
+
+        subView.greenButton.addTarget(self, action: "changeColor3:", forControlEvents: .TouchUpInside)
+        
+        subView.yellowButton.addTarget(self, action: "changeColor4:", forControlEvents: .TouchUpInside)
+
+        subView.orangeButton.addTarget(self, action: "changeColor5:", forControlEvents: .TouchUpInside)
+        
+        subView.purpleButton.addTarget(self, action: "changeColor6:", forControlEvents: .TouchUpInside)
+        
+        subView.blackButton.addTarget(self, action: "changeColor7:", forControlEvents: .TouchUpInside)
+
         if isSubViewAppear == false {
             //viewに追加
             self.view.addSubview(subView)
@@ -79,6 +95,34 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
             subView.removeFromSuperview()
             isSubViewAppear = false
         }
+    }
+    
+    func changeColor1(sender: UIButton) {
+        lineColor = UIColor.redColor()
+    }
+    
+    func changeColor2(sender: UIButton) {
+        lineColor = UIColor.blueColor()
+    }
+    
+    func changeColor3(sender: UIButton) {
+        lineColor = UIColor.greenColor()
+    }
+    
+    func changeColor4(sender: UIButton) {
+        lineColor = UIColor.yellowColor()
+    }
+    
+    func changeColor5(sender: UIButton) {
+        lineColor = UIColor.orangeColor()
+    }
+    
+    func changeColor6(sender: UIButton) {
+        lineColor = UIColor.purpleColor()
+    }
+    
+    func changeColor7(sender: UIButton) {
+        lineColor = UIColor.blackColor()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -164,8 +208,8 @@ UINavigationControllerDelegate, UIActionSheetDelegate {
         if lastDrawImage != nil {
             lastDrawImage.drawAtPoint(CGPointZero)
         }
-        let blackColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-        blackColor.setStroke()
+        //色
+        lineColor.setStroke()
         path.stroke()
         haikeiImageView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
